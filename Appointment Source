@@ -1,0 +1,99 @@
+# Import datetime module to validate dates
+from datetime import datetime
+# Define a dictionary to store appointments
+appointments = {}
+# Function to add appointments
+# This functions takes in 3 arguments: date, time, and description. The function checks if the entered date exist in the appointments dictionary. If it does not, the function creates an empty list for the specified date. It then loops through the list adding appointments as needed. If an existing appointment is found with the same time, it will still add the appointment. Used a while loop to continue prompting until the user enters a description.
+ 
+def add_appointment(date, time, description):
+    while not description:
+        description = input("Please enter a description for this appointment: ")
+    if date not in appointments:
+        appointments[date] = []
+    appointments[date].append((time, description))
+    return True
+# Function to print all appointments
+#
+def print_appointments():
+    for date, appts in appointments.items():
+        print(date)
+        for time, desc in appts:
+            print("   {}- {}".format(time, desc))
+# Function responsible for deleting an appointment if it exist.
+# This functions takes in 2 arguments: date and time and checks if the specific data exist in the appointments dictionary. If found, the function deletes it from the list. The function then returns either true or false resulting if the appointment was succesfully deleted or could not be found.
+def delete_appointment(date, time):
+    if date in appointments:
+        appts = appointments[date]
+        for i in range(len(appts)):
+            if appts[i][0] == time:
+                del appts[i]
+                if len(appts) == 0:
+                    del appointments[date]
+                return True
+    return False
+# Function for user interface for client to interact with.
+def get_user_choice():
+    print("Appointment Menu:")
+    print("1. Add Appointment")
+    print("2. View Appointments")
+    print("3. Delete Appointment")
+    print("4. Exit Application")
+    choice = input("Enter choice (1-4): ")
+    return choice
+# Function to ensure the correct format for date is being used.
+# If date is valid, return true if not, it will return false with an error.
+def validate_date(date):
+    try:
+        datetime.strptime(date, '%Y-%m-%d')
+        return True
+    except ValueError:
+        return False
+# Function to ensure the correct format for the time is being used
+# If time is valid, return true, if not, it will return false with an error.
+def validate_time(time):
+    try:
+        datetime.strptime(time, '%H:%M')
+        return True
+    except ValueError:
+        return False
+#Sample appointments for testing the application
+add_appointment("2023-04-24", "7:00", "Meeting with Professor")
+add_appointment("2023-04-26", "7:00", "Meeting with Dev Team")
+add_appointment("2023-04-26", "7:30", "Meeting with Dev Team and Client")
+add_appointment("2023-04-26", "8:00", "Follow-up call with Dev Team")
+add_appointment("2023-04-30", "11:59", "Submit documentation to Professor")
+# Main program loop
+while True:
+    choice = get_user_choice()
+    if choice == "1":
+        while True:
+            date = input("Enter date (YYYY-MM-DD): ")
+            if validate_date(date):
+                break
+            else:
+                print("Invalid date format. Please enter a date using YYYY-MM-DD.")
+        while True:
+            time = input("Enter time (HH:MM): ")
+            if validate_time(time):
+                break
+            else:
+                print("Invalid format, please enter time using HH:MM.")
+        desc = input("Enter description: ")
+      
+        if add_appointment(date, time, desc):
+            print("Appointment confirmed.")
+        else:
+            print("Failed to add appointment.")
+    elif choice == "2":
+        print_appointments()
+    elif choice == "3":
+        date = input("Enter date (YYYY-MM-DD): ")
+        time = input("Enter time (HH:MM): ")
+        if delete_appointment(date, time):
+            print("Appointment deleted.")
+        else:
+            print("Appointment not found.")
+    elif choice == "4":
+        break
+    else:
+        print("Invalid choice. Please enter a number between 1 and 4.")
